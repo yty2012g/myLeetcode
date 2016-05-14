@@ -5,7 +5,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Q45 {
-	public int jump(int[] nums) {
+	
+	public int jump2(int[] nums) {
 		if (nums.length == 1 || nums.length == 0)
 			return 0;
 		int[] dp = new int[nums.length];
