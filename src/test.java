@@ -15,7 +15,8 @@ public class test {
 		char[][] s = { t[0].toCharArray(), t[1].toCharArray(), t[2].toCharArray(), t[3].toCharArray(),
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
 		Q60 q = new Q60();
-		System.out.println(q.getPermutation(3, 9));
+		String x="hello";
+		System.out.println(x.substring(0,2));
 		
 	}
 }
