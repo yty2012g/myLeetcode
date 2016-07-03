@@ -14,7 +14,9 @@ public class test {
 				"1.....85.", ".5....3.." };
 		char[][] s = { t[0].toCharArray(), t[1].toCharArray(), t[2].toCharArray(), t[3].toCharArray(),
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
-		Q93 q = new Q93();
-		System.out.println(q.restoreIpAddresses("25525511135"));
+		Q130 q = new Q130();
+		String test="test";
+		System.out.println(test.substring(4,4));
+	
 	}
 }
