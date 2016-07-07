@@ -16,6 +16,7 @@ public class test {
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
 		Q165 q = new Q165();
 		q.compareVersion("1", "0");
-		
+		Integer a=162;
+		System.out.println(a.hashCode());
 	}
 }

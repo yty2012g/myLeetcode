@@ -1,30 +1,18 @@
 package hard;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Q45 {
-	
-	public int jump2(int[] nums) {
-		if (nums.length == 1 || nums.length == 0)
-			return 0;
+	public int jump(int[] nums) {
 		int[] dp = new int[nums.length];
-		TreeMap<Integer, Integer> tmap = new TreeMap<Integer, Integer>();
-		tmap.put(0, nums.length - 1);
-		dp[dp.length - 1] = 0;
-		for (int i = dp.length - 2; i >= 0; i--) {
-			int max = nums[i] > (dp.length - 1 - i) ? (dp.length - 1 - i) : nums[i];
-			Iterator iter = tmap.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				if ((Integer) entry.getValue() <= i + max) {
-					dp[i]=(Integer) entry.getKey() + 1;
-					tmap.put((Integer) entry.getKey() + 1, i);
-					break;
+		dp[0] = 0;
+		for (int i = 0; i < nums.length - 1; i++) {
+			for (int j = 1; j <= nums[i]; j++) {
+				if (i + j < nums.length) {
+					dp[i + j] = dp[i + j] == 0 ? dp[i] + 1 : Math.min(dp[i] + 1, dp[i + j]);
 				}
-			}		
+			}
 		}
-		return dp[0];
+		return dp[nums.length - 1];
 	}
 }
