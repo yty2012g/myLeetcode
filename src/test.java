@@ -14,9 +14,9 @@ public class test {
 				"1.....85.", ".5....3.." };
 		char[][] s = { t[0].toCharArray(), t[1].toCharArray(), t[2].toCharArray(), t[3].toCharArray(),
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
-		Q165 q = new Q165();
-		q.compareVersion("1", "0");
-		Integer a=162;
-		System.out.println(a.hashCode());
+		Q200 q = new Q200();
+		String[] test = {"111","010","111"};
+		char[][] grid = { test[0].toCharArray(), test[1].toCharArray(), test[2].toCharArray()};
+		q.numIslands(grid);
 	}
 }
