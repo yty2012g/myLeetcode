@@ -15,9 +15,23 @@ public class test {
 		char[][] s = { t[0].toCharArray(), t[1].toCharArray(), t[2].toCharArray(), t[3].toCharArray(),
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
 		Q209 q = new Q209();
-		int[] nums={10,5,13,4,8,4,5,11,14,9,16,10,20,8};
-		int ss=80;
-		q.minSubArrayLen(ss, nums);
-		
+		PriorityQueue<Integer> pq = new PriorityQueue<Integer>(2, new Comparator<Integer>() {
+
+			@Override
+			public int compare(Integer arg0, Integer arg1) {
+				// TODO Auto-generated method stub
+				if (arg0 > arg1)
+					return -1;
+				else
+					return 1;
+			}
+
+		});
+		pq.offer(1);
+		pq.offer(2);
+		pq.offer(3);
+		pq.offer(4);
+		pq.offer(5);
+		System.out.println(pq);
 	}
 }
