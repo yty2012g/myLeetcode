@@ -14,8 +14,11 @@ public class test {
 				"1.....85.", ".5....3.." };
 		char[][] s = { t[0].toCharArray(), t[1].toCharArray(), t[2].toCharArray(), t[3].toCharArray(),
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
-		Q224 q = new Q224();
-		String st = "2-(5-6)";
-		q.calculate(st);
+		Q228 q = new Q228();
+		int[] nums = { -2147483648, -2147483647, 2147483647 };
+		q.summaryRanges(nums);
+		NewtonSqrt nt=new NewtonSqrt();
+		
+		System.out.println(nt.sqrt(0x7f));
 	}
 }
