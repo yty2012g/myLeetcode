@@ -19,6 +19,7 @@ public class test {
 		q.summaryRanges(nums);
 		NewtonSqrt nt=new NewtonSqrt();
 		
-		System.out.println(nt.sqrt(0x7f));
+		System.out.println(1^2^3^2^1^0);
 	}
 }
+ 
