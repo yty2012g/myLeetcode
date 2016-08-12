@@ -14,14 +14,9 @@ public class test {
 				"1.....85.", ".5....3.." };
 		char[][] s = { t[0].toCharArray(), t[1].toCharArray(), t[2].toCharArray(), t[3].toCharArray(),
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
-		Q306 q = new Q306();
-		LinkedList<Integer> list=new LinkedList<>();
-		list.add(1);
-		list.add(5);
-		list.add(4);
-		list.add(5);
-		list.add(2);
-		list.remove((Integer)5);
-		System.out.println(list);
+		Q377 q = new Q377();
+		int nums[]={1,2,3,4};
+		System.out.println(q.combinationSum4(nums, 32));
+		
 	}
 }
