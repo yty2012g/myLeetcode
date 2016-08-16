@@ -16,7 +16,24 @@ public class test {
 				t[4].toCharArray(), t[5].toCharArray(), t[6].toCharArray(), t[7].toCharArray(), t[8].toCharArray() };
 		Q377 q = new Q377();
 		int nums[]={1,2,3,4};
-		System.out.println(q.combinationSum4(nums, 32));
+		System.out.println(chu2("1234567"));
 		
+	}
+	public static String chu2(String s) {
+		int count = 0;
+		String res = "";
+		for (int i = 0; i < s.length(); i++) {
+			int plus = (count + (s.charAt(i) - '0')) / 2;
+			if (res.length() == 0 && plus == 0) {
+			} else {
+				res += plus;
+			}
+			if (((s.charAt(i) - '0') & 1) == 1) {
+				count = 10;
+			} else {
+				count = 0;
+			}
+		}
+		return res;
 	}
 }
