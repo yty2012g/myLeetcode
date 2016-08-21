@@ -2,169 +2,145 @@ package hard;
 
 import java.util.*;
 
+/*
+ * 2016.8.21
+ * 终于做出来了。。
+ * 首先，使用一个三位数组flag[i][j][k]，用来标记第i行，第j列的位置，能否填k。
+ * 然后，根据初始的情况，对于每个有数字的位置，将其横纵和九宫格内的其余位置的当前数字的标志位设置为true，表示不能填了。
+ * 再然后，使用init来初步剪枝，就是，在初始化以后，可能会有少数的位置只有1种选择，那么直接填写就行，并且更改横纵和九宫格的标志位，直到没有一个位置只有一种可以填写的可能性为止。
+ * 最后，开始回溯，首先要记录横纵和九宫格的标志位，用来恢复现场，然后就是填写一个，开始递归。如果出现一个位置的所有标志位都扫描完，但是还是无法填写的时候，返回false。否则，继续填写。
+ * 如果回溯后，发现当初的填写并不正确时，就需要根据刚才的情况恢复现场，并选择下一个标志位。
+ * 现场包括，横，纵和九宫格内位置的标志位情况。
+ */
 public class Q37 {
-	public HashMap<String, LinkedList<Character>> map;
-	public TreeMap<String, LinkedList<Character>> tmap;
-
 	public void solveSudoku(char[][] board) {
-		map = new HashMap<String, LinkedList<Character>>();
-		tmap = new TreeMap<String, LinkedList<Character>>();
-		LinkedList<Character> list = new LinkedList<Character>();
-		for (char i = '1'; i <= '9'; i++)
-			list.add(i);
+		boolean[][][] flag = new boolean[9][9][9];
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (board[i][j] != '.') {
+					for (int k = 0; k < 9; k++) {
+						flag[i][j][k] = true;
+						flag[i][k][board[i][j] - '1'] = true;
+						flag[k][j][board[i][j] - '1'] = true;
+					}
+					for (int k = i / 3 * 3; k < i / 3 * 3 + 3; k++) {
+						for (int l = j / 3 * 3; l < j / 3 * 3 + 3; l++) {
+							flag[k][l][board[i][j] - '1'] = true;
+						}
+					}
+				}
+			}
+		}
+		print(board);
+		System.out.println();
+		init(board, flag);
+		print(board);
+		bactrack(board, flag);
+	}
+
+	public boolean bactrack(char[][] board, boolean[][][] flag) {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				if (board[i][j] == '.') {
-					LinkedList<Character> copy = (LinkedList<Character>) list.clone();
-					for (int a = 0; a < 9; a++) {
-						if (board[a][j] != '.')
-							copy.remove((Character) board[a][j]);
-						if (board[i][a] != '.')
-							copy.remove((Character) board[i][a]);
-					}
-					int startH = i / 3 * 3;
-					int startL = j / 3 * 3;
-					for (int a = startH; a < startH + 3; a++) {
-						for (int b = startL; b < startL + 3; b++) {
-							if (board[a][b] != '.')
-								copy.remove((Character) board[a][b]);
+					boolean[][] x = new boolean[9][9];
+					boolean[][] y = new boolean[9][9];
+					boolean[][][] jiu = new boolean[3][3][9];
+					for (int k = 0; k < 9; k++) {
+						for (int l = 0; l < 9; l++) {
+							x[k][l] = flag[i][k][l];
+							y[k][l] = flag[k][j][l];
 						}
 					}
-					String mapKey = i + "," + j;
-					String tmapKey = copy.size() + "," + i + "," + j;
-					map.put(mapKey, copy);
-					tmap.put(tmapKey, copy);
+					for (int m = i / 3 * 3; m < i / 3 * 3 + 3; m++) {
+						for (int n = j / 3 * 3; n < j / 3 * 3 + 3; n++) {
+							for (int k = 0; k < 9; k++) {
+								jiu[m - i / 3 * 3][n - j / 3 * 3][k] = flag[m][n][k];
+							}
+						}
+					}
+					for (int k = 0; k < 9; k++) {
+						if (!flag[i][j][k]) {
+							board[i][j] = (char) (k + '1');
+							for (int l = 0; l < 9; l++) {
+								flag[i][l][k] = true;
+								flag[l][j][k] = true;
+							}
+							for (int m = i / 3 * 3; m < i / 3 * 3 + 3; m++) {
+								for (int n = j / 3 * 3; n < j / 3 * 3 + 3; n++) {
+									flag[m][n][k] = true;
+								}
+							}
+							if (bactrack(board, flag))
+								return true;
+							else {
+								for (int l = 0; l < 9; l++) {
+									flag[i][l][k] = x[l][k];
+									flag[l][j][k] = y[l][k];
+								}
+								for (int m = i / 3 * 3; m < i / 3 * 3 + 3; m++) {
+									for (int n = j / 3 * 3; n < j / 3 * 3 + 3; n++) {
+										for (int p = 0; p < 9; p++) {
+											flag[m][n][p] = jiu[m - i / 3 * 3][n - j / 3 * 3][p];
+										}
+									}
+								}
+								board[i][j] = '.';
+							}
+						}
+					}
+					if (board[i][j] == '.')
+						return false;
 				}
 			}
 		}
-		while (tmap.size() != 0) {
-			boolean flag = true;
-			Iterator iter = tmap.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry entry = (Map.Entry) iter.next();
-				String k = (String) entry.getKey();
-				LinkedList<Character> v = (LinkedList<Character>) entry.getValue();
-				String[] res = k.split(",");
-				int num = Integer.parseInt(res[0]);
-				int x = Integer.parseInt(res[1]);
-				int y = Integer.parseInt(res[2]);
-				if (num != 1)
-					break;
-				flag = false;
-				board[x][y] = v.get(0);
-				map.remove(x + "," + y);
-				for (int a = 0; a < 9; a++) {
-					if (board[a][y] == '.') {
-						String mk = a + "," + y;
-						map.get(mk).remove((Character) v.get(0));
-					}
-					if (board[x][a] == '.') {
-						String mk = x + "," + a;
-						map.get(mk).remove((Character) v.get(0));
-					}
-					int startH = x / 3 * 3;
-					int startL = y / 3 * 3;
-					for (int i = startH; i < startH + 3; i++) {
-						for (int j = startL; j < startL + 3; j++) {
-							if (board[i][j] == '.')
-								map.get(i + "," + j).remove((Character) v.get(0));
-						}
-					}
-				}
-			}
-			if (flag)
-				break;
-			tmap.clear();
-			Iterator it = map.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry entry = (Map.Entry) it.next();
-				String k = (String) entry.getKey();
-				LinkedList<Character> v = (LinkedList<Character>) entry.getValue();
-				String tk = v.size() + "," + k;
-				tmap.put(tk, v);
-			}
-
-			//System.out.println();
-		}
-		TreeMap<String, LinkedList<Character>> tcopy = new TreeMap<String, LinkedList<Character>>();
-		HashMap<String, LinkedList<Character>> copy = new HashMap<String, LinkedList<Character>>();
-		Iterator it = map.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String k = (String) entry.getKey();
-			LinkedList<Character> v = (LinkedList<Character>) entry.getValue();
-			v = (LinkedList<Character>) v.clone();
-			String tk = v.size() + "," + k;
-			tcopy.put(tk, v);
-			copy.put(k, v);
-		}
-		printtmap(tmap);
-		print(board);
-		//solve(board,tcopy,copy);
+		return true;
 	}
 
-	public boolean solve(char[][] board, TreeMap<String, LinkedList<Character>> tm,
-			HashMap<String, LinkedList<Character>> m) {
-//		char[][] copyboard=board.clone();
-//		TreeMap<String, LinkedList<Character>> tcopy = new TreeMap<String, LinkedList<Character>>();
-//		HashMap<String, LinkedList<Character>> copy = new HashMap<String, LinkedList<Character>>();
-//		Iterator it = m.entrySet().iterator();
-//		while (it.hasNext()) {
-//			Map.Entry entry = (Map.Entry) it.next();
-//			String k = (String) entry.getKey();
-//			LinkedList<Character> v = (LinkedList<Character>) entry.getValue();
-//			if(v.size()==0) return false;
-//			v = (LinkedList<Character>) v.clone();
-//			String tk = v.size() + "," + k;
-//			tcopy.put(tk, v);
-//			copy.put(k, v);
-//		}
-//		Iterator iter = tcopy.entrySet().iterator();
-//		Map.Entry entry = (Map.Entry) iter.next();
-//		String k = (String) entry.getKey();
-//		LinkedList<Character> v = (LinkedList<Character>) entry.getValue();
-//		String[] res = k.split(",");
-//		int num = Integer.parseInt(res[0]);
-//		int x = Integer.parseInt(res[1]);
-//		int y = Integer.parseInt(res[2]);
-		return false;
+	public void init(char[][] board, boolean[][][] flag) {
+		int x = 0;
+		int y = 0;
+		int temp = -1;
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if (board[i][j] == '.') {
+					int count = 0;
+					for (int k = 0; k < 9; k++) {
+						if (count > 1)
+							break;
+						if (!flag[i][j][k])
+							count++;
+					}
+					if (count == 1) {
+						x = i;
+						y = j;
+						for (int k = 0; k < 9; k++) {
+							if (!flag[i][j][k])
+								temp = k;
+						}
+						break;
+					}
+				}
+			}
+		}
+		if (temp == -1)
+			return;
+		for (int i = 0; i < 9; i++) {
+			flag[x][i][temp] = true;
+			flag[i][y][temp] = true;
+		}
+		for (int k = x / 3 * 3; k < x / 3 * 3 + 3; k++) {
+			for (int l = y / 3 * 3; l < y / 3 * 3 + 3; l++) {
+				flag[k][l][temp] = true;
+			}
+		}
+		board[x][y] = (char) (temp + '1');
+		init(board, flag);
 	}
 
 	public void print(char[][] board) {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				if (board[i][j] != '.')
-					System.out.print(board[i][j]);
-				else
-					System.out.print('_');
-			}
-			System.out.println();
-		}
-	}
-
-	public void printmap(HashMap<String, LinkedList<Character>> map) {
-		Iterator iter = map.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String k = (String) entry.getKey();
-			LinkedList<Character> v = (LinkedList<Character>) entry.getValue();
-			System.out.print(k + "   ");
-			for (int i = 0; i < v.size(); i++) {
-				System.out.print(v.get(i) + ",");
-			}
-			System.out.println();
-		}
-	}
-
-	public void printtmap(TreeMap<String, LinkedList<Character>> map) {
-		Iterator iter = map.entrySet().iterator();
-		while (iter.hasNext()) {
-			Map.Entry entry = (Map.Entry) iter.next();
-			String k = (String) entry.getKey();
-			LinkedList<Character> v = (LinkedList<Character>) entry.getValue();
-			System.out.print(k + "   ");
-			for (int i = 0; i < v.size(); i++) {
-				System.out.print(v.get(i) + ",");
+				System.out.print(board[i][j] + "  ");
 			}
 			System.out.println();
 		}
